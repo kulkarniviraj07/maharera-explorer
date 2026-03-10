@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MahaRERA Project Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Karla:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --white:#ffffff; --bg:#edeae4; --bg2:#e2ddd5; --surface:#f5f2ee;
+  --border:#ccc8bf; --border2:#b5b0a6;
+  --text:#18150f; --text2:#2c2820; --muted:#625d57; --muted2:#9e9890;
+  --accent:#1a4f9c; --accent-light:#dce8f8; --accent-xlight:#eef4fc;
+  --accent2:#0a8c5e; --accent2-light:#d4f0e4;
+  --warn:#b84e1a; --warn-light:#faeade;
+  --rent:#6e35ab; --rent-light:#ede0fa; --rent-mid:#8b50cc;
+  --shadow:0 1px 4px rgba(0,0,0,0.09),0 4px 18px rgba(0,0,0,0.07);
+  --shadow-lg:0 6px 28px rgba(0,0,0,0.13);
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Karla',sans-serif;font-weight:400;min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ══════════════ LOGIN PAGE ══════════════ */
+#loginPage {
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  background: linear-gradient(135deg, #1a2f5e 0%, #2a5caa 50%, #1a4a3a 100%);
+  padding:24px;
+}
+.login-card {
+  background:var(--white); border-radius:20px; padding:52px 48px;
+  max-width:420px; width:100%; box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+  animation: loginIn .4s ease;
+}
+@keyframes loginIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+.login-logo { display:flex; align-items:center; gap:10px; margin-bottom:36px; }
+.login-logo-mark { width:40px; height:40px; background:var(--accent); border-radius:8px; display:flex; align-items:center; justify-content:center; color:white; font-family:'Playfair Display',serif; font-size:18px; font-weight:900; }
+.login-logo-text { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--text); }
+.login-logo-text span { color:var(--accent); }
+.login-card h2 { font-family:'Playfair Display',serif; font-size:26px; font-weight:900; color:var(--text); margin-bottom:6px; }
+.login-card .sub { font-size:13px; color:var(--muted); margin-bottom:32px; line-height:1.5; }
+.field-group { margin-bottom:18px; }
+.field-group label { display:block; font-size:11px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); margin-bottom:7px; }
+.field-group input {
+  width:100%; border:1.5px solid var(--border2); border-radius:9px; padding:13px 16px;
+  font-family:'Karla',sans-serif; font-size:14px; color:var(--text); outline:none;
+  transition:border-color .15s, box-shadow .15s; background:var(--white);
+}
+.field-group input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(42,92,170,.1); }
+.field-group input.err { border-color:var(--warn); }
+.login-btn {
+  width:100%; background:var(--accent); color:white; border:none; border-radius:9px;
+  padding:14px; font-family:'Karla',sans-serif; font-size:14px; font-weight:700;
+  cursor:pointer; transition:background .15s, transform .1s; margin-top:8px;
+  letter-spacing:.02em;
+}
+.login-btn:hover { background:#1e4a90; }
+.login-btn:active { transform:scale(.98); }
+.login-btn:disabled { background:var(--muted2); cursor:not-allowed; transform:none; }
+.login-error { background:var(--warn-light); border:1px solid #f0c4aa; border-radius:8px; padding:11px 14px; font-size:13px; color:var(--warn); margin-bottom:16px; display:none; }
+.login-error.show { display:block; }
+.auth-switch { margin-top:18px; text-align:center; font-size:13px; color:var(--muted); }
+.auth-switch a { color:var(--accent); font-weight:600; text-decoration:none; }
+.auth-switch a:hover { text-decoration:underline; }
+
+/* ══════════════ APP ══════════════ */
+#appPage { display:none; }
+
+/* Topbar */
+.topbar { background:var(--accent); padding:0 40px; display:flex; align-items:center; justify-content:space-between; height:60px; position:sticky; top:0; z-index:200; box-shadow:0 2px 10px rgba(0,0,0,0.18); }
+.logo { display:flex; align-items:center; gap:10px; }
+.logo-mark { width:32px; height:32px; background:rgba(255,255,255,0.18); border-radius:6px; display:flex; align-items:center; justify-content:center; color:white; font-family:'Playfair Display',serif; font-size:14px; font-weight:900; border:1px solid rgba(255,255,255,0.25); }
+.logo-text { font-family:'Playfair Display',serif; font-size:17px; font-weight:700; color:white; }
+.logo-text span { color:#a8c8f8; }
+.topbar-right { display:flex; align-items:center; gap:14px; }
+.topbar-label { font-size:12px; color:rgba(255,255,255,0.65); font-weight:500; letter-spacing:.04em; }
+.logout-btn { background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25); border-radius:7px; padding:6px 14px; font-family:'Karla',sans-serif; font-size:12px; font-weight:600; color:rgba(255,255,255,0.85); cursor:pointer; transition:all .15s; }
+.logout-btn:hover { background:rgba(255,255,255,0.22); color:white; }
+
+/* Hero */
+.hero { background:var(--white); border-bottom:2px solid var(--border); padding:48px 40px 36px; }
+.hero-inner { max-width:860px; margin:0 auto; }
+.hero-eyebrow { font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); margin-bottom:14px; }
+.hero h1 { font-family:'Playfair Display',serif; font-size:clamp(30px,4vw,48px); font-weight:900; letter-spacing:-.03em; color:var(--text); line-height:1.1; margin-bottom:12px; }
+.hero-desc { font-size:15px; color:var(--muted); line-height:1.6; max-width:540px; margin-bottom:32px; }
+.stats-strip { display:flex; border:1px solid var(--border); border-radius:10px; overflow:hidden; max-width:680px; box-shadow:var(--shadow-sm); }
+.stat-pill { flex:1; padding:14px 18px; border-right:1px solid var(--border); background:var(--surface); transition:background .15s; }
+.stat-pill:last-child { border-right:none; }
+.stat-num { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--accent); line-height:1; margin-bottom:3px; }
+.stat-label { font-size:11px; color:var(--muted); letter-spacing:.05em; text-transform:uppercase; }
+
+/* Main */
+.main { max-width:1080px; margin:0 auto; padding:36px 40px 60px; }
+.selector-panel { background:var(--white); border:1px solid var(--border); border-top:3px solid var(--accent); border-radius:12px; padding:22px 26px; margin-bottom:24px; box-shadow:var(--shadow); }
+.panel-label { font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:14px; }
+.controls-row { display:flex; gap:12px; flex-wrap:wrap; align-items:flex-start; }
+
+/* Dropdown */
+.select-wrap { position:relative; flex:2; min-width:260px; }
+.select-trigger { width:100%; background:var(--white); border:1.5px solid var(--border2); border-radius:8px; padding:11px 40px 11px 14px; font-family:'Karla',sans-serif; font-size:14px; color:var(--text); cursor:pointer; text-align:left; display:flex; align-items:center; transition:border-color .15s,box-shadow .15s; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.select-trigger:hover { border-color:var(--accent); }
+.select-trigger.open { border-color:var(--accent); box-shadow:0 0 0 3px rgba(42,92,170,.12); }
+.select-arrow { position:absolute; right:13px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none; font-size:11px; transition:transform .2s; }
+.select-arrow.up { transform:translateY(-50%) rotate(180deg); }
+.select-dropdown { position:absolute; top:calc(100% + 6px); left:0; right:0; background:var(--white); border:1.5px solid var(--border2); border-radius:10px; box-shadow:var(--shadow-lg); z-index:300; display:none; overflow:hidden; }
+.select-dropdown.open { display:flex; flex-direction:column; }
+.dropdown-search-wrap { padding:10px 12px; border-bottom:1px solid var(--border); position:relative; background:var(--surface); }
+.dropdown-search { width:100%; border:1.5px solid var(--border2); border-radius:6px; padding:8px 12px 8px 32px; font-family:'Karla',sans-serif; font-size:13px; color:var(--text); outline:none; background:var(--bg); }
+.dropdown-search:focus { border-color:var(--accent); }
+.dropdown-search::placeholder { color:var(--muted2); }
+.dropdown-search-icon { position:absolute; left:22px; top:50%; transform:translateY(-50%); color:var(--muted2); font-size:13px; pointer-events:none; }
+.dropdown-list { max-height:300px; overflow-y:auto; }
+.dropdown-list::-webkit-scrollbar { width:4px; }
+.dropdown-list::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+.dropdown-option { padding:10px 16px; cursor:pointer; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:10px; transition:background .1s; }
+.dropdown-option:last-child { border-bottom:none; }
+.dropdown-option:hover, .dropdown-option.selected { background:var(--accent-light); }
+.opt-name { font-size:13px; font-weight:600; color:var(--text2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1; }
+.opt-meta { font-size:11px; color:var(--muted); white-space:nowrap; flex-shrink:0; }
+.opt-badge { font-size:10px; padding:2px 6px; border-radius:3px; background:var(--accent2-light); color:var(--accent2); font-weight:600; flex-shrink:0; }
+.dropdown-empty { padding:20px; text-align:center; color:var(--muted); font-size:13px; }
+.filter-sel { background:var(--white); border:1.5px solid var(--border2); border-radius:8px; padding:11px 14px; font-family:'Karla',sans-serif; font-size:13px; color:var(--text); outline:none; cursor:pointer; transition:border-color .15s; min-width:150px; }
+.filter-sel:focus,.filter-sel:hover { border-color:var(--accent); }
+
+/* Badge */
+.badge { display:inline-flex; align-items:center; font-size:10px; font-weight:600; padding:3px 8px; border-radius:4px; letter-spacing:.04em; text-transform:uppercase; white-space:nowrap; flex-shrink:0; }
+.badge-res { background:var(--accent2-light); color:var(--accent2); }
+.badge-com { background:var(--warn-light); color:var(--warn); }
+.badge-mix { background:#f0edf8; color:#7c4db8; }
+.badge-oth { background:#f2f2f0; color:var(--muted); }
+
+/* Placeholder */
+.placeholder { background:var(--white); border:1px solid var(--border); border-radius:12px; padding:72px 40px; text-align:center; box-shadow:var(--shadow); }
+.placeholder-icon { font-size:40px; margin-bottom:16px; opacity:.25; }
+.placeholder h3 { font-family:'Playfair Display',serif; font-size:20px; font-weight:700; color:var(--text); margin-bottom:6px; }
+.placeholder p { font-size:13px; color:var(--muted); line-height:1.6; }
+
+/* Loading spinner */
+.loading-state { display:flex; align-items:center; justify-content:center; gap:12px; padding:64px; font-size:14px; color:var(--muted); }
+.spinner { width:20px; height:20px; border:2px solid var(--border2); border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* Project display */
+.project-display { display:none; }
+.project-display.visible { display:block; animation:fadeIn .3s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.proj-header { background:var(--white); border:1px solid var(--border); border-left:4px solid var(--accent); border-radius:12px; padding:24px 28px; margin-bottom:16px; box-shadow:var(--shadow); display:flex; align-items:flex-start; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+.proj-header-left { flex:1; min-width:200px; }
+.proj-title { font-family:'Playfair Display',serif; font-size:clamp(20px,3vw,30px); font-weight:900; letter-spacing:-.02em; color:var(--text); line-height:1.15; margin-bottom:6px; }
+.proj-building { font-size:13px; color:var(--muted); margin-bottom:10px; }
+.proj-tags { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.proj-tag { font-size:12px; color:var(--muted); display:flex; align-items:center; gap:4px; }
+.proj-header-right { text-align:right; flex-shrink:0; }
+
+/* Grid & Cards */
+.grid { display:grid; grid-template-columns:repeat(12,1fr); gap:16px; }
+.col-4{grid-column:span 4} .col-6{grid-column:span 6} .col-8{grid-column:span 8} .col-12{grid-column:span 12}
+@media(max-width:760px) {
+  .col-4,.col-6,.col-8{grid-column:span 12}
+  .main{padding:24px 20px 48px} .topbar{padding:0 20px} .hero{padding:36px 20px 28px}
+  .login-card{padding:36px 28px}
+}
+.card { background:var(--white); border:1px solid var(--border); border-radius:10px; padding:20px 22px; box-shadow:var(--shadow); }
+.card-head { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:14px; padding:8px 10px; margin:-20px -22px 16px; background:var(--surface); border-bottom:1px solid var(--border); border-radius:10px 10px 0 0; }
+.field { display:flex; justify-content:space-between; align-items:flex-start; padding:8px 0; border-bottom:1px solid var(--border); gap:12px; }
+.field:last-child { border-bottom:none; padding-bottom:0; }
+.field-k { font-size:12px; color:var(--muted); flex-shrink:0; max-width:50%; line-height:1.4; font-weight:500; }
+.field-v { font-size:12px; font-weight:600; color:var(--text2); text-align:right; word-break:break-word; line-height:1.4; }
+.field-v.blue{color:var(--accent)} .field-v.green{color:var(--accent2)} .field-v.orange{color:var(--warn)} .field-v.na{color:var(--muted2);font-weight:400}
+
+/* Area bars */
+.area-bar{margin-bottom:14px} .area-bar:last-child{margin-bottom:0}
+.area-bar-top{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px}
+.area-bar-top span:last-child{font-weight:600;color:var(--text)}
+.area-track{height:7px;background:var(--bg2);border-radius:4px;overflow:hidden}
+.area-fill{height:100%;border-radius:3px;width:0;transition:width .9s cubic-bezier(.16,1,.3,1)}
+
+/* Compass */
+.compass{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.compass-cell{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:10px 12px}
+.compass-dir{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.compass-val{font-size:11px;color:var(--text);line-height:1.4}
+
+/* Map */
+.map-cta{display:flex;align-items:center;justify-content:center;gap:7px;background:var(--accent-light);color:var(--accent);font-size:13px;font-weight:600;padding:12px;border-radius:8px;text-decoration:none;margin-top:12px;transition:background .15s}
+.map-cta:hover{background:#dde7f5}
+.coords-display{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:12px 14px;font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:5px;margin-bottom:4px}
+.coords-display span{display:flex;justify-content:space-between}
+.coords-display b{color:var(--text);font-weight:500}
+
+/* Analytics */
+.analytics-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;margin-top:16px}
+.no-graph{background:var(--bg);border:1.5px dashed var(--border2);border-radius:10px;padding:28px;text-align:center;font-size:13px;color:var(--muted2);margin-top:16px}
+.no-graph b{display:block;font-size:14px;color:var(--muted);margin-bottom:5px}
+.report-table{width:100%;border-collapse:collapse;font-size:12px}
+.report-table th{text-align:left;padding:9px 11px;background:var(--surface);color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-bottom:2px solid var(--border2)}
+.report-table td{padding:9px 11px;border-bottom:1px solid var(--border);color:var(--text2);font-weight:500}
+.report-table tr:last-child td{border-bottom:none}
+.report-table tbody tr:hover td{background:var(--accent-xlight)}
+
+
+/* Buy/Rent toggle */
+.mode-toggle { display:flex; align-items:center; border:1.5px solid var(--border2); border-radius:8px; overflow:hidden; flex-shrink:0; }
+.mode-btn { padding:10px 16px; font-family:'Karla',sans-serif; font-size:13px; font-weight:600; cursor:pointer; border:none; background:transparent; color:var(--muted); transition:all .18s; white-space:nowrap; }
+.mode-btn:hover:not(.active-buy):not(.active-rent) { background:var(--bg2); color:var(--text); }
+.mode-btn.active-buy  { background:var(--accent); color:white; }
+.mode-btn.active-rent { background:var(--rent); color:white; }
+.mode-divider { width:1px; background:var(--border2); height:20px; flex-shrink:0; }
+
+/* Price summary card */
+.price-summary { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:4px; }
+.price-box { padding:14px 16px; border-radius:8px; border:1px solid var(--border); background:var(--surface); }
+.price-box.buy  { border-left:3px solid var(--accent); }
+.price-box.rent { border-left:3px solid var(--rent); }
+.price-box-label { font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.price-box-val  { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; line-height:1; margin-bottom:3px; }
+.price-box-val.buy  { color:var(--accent); }
+.price-box-val.rent { color:var(--rent); }
+.price-box-sub  { font-size:11px; color:var(--muted); margin-top:2px; }
+.price-box-psf  { font-size:11px; color:var(--muted2); margin-top:1px; }
+
+/* Mode pill shown above project cards */
+.mode-pill { display:inline-flex; align-items:center; gap:6px; padding:5px 12px; border-radius:20px; font-size:12px; font-weight:600; margin-bottom:14px; }
+.mode-pill.buy  { background:var(--accent-light); color:var(--accent); border:1px solid #b8d0f0; }
+.mode-pill.rent { background:var(--rent-light);   color:var(--rent);   border:1px solid #c8aae8; }
+
+/* Table cell coloring for prices */
+.cell-buy    { color:var(--accent);  font-weight:700; }
+.cell-rent   { color:var(--rent);    font-weight:700; }
+.cell-psf    { color:var(--muted);   font-size:11px; }
+.cell-market { color:var(--accent2); font-weight:600; }
+.cell-hl     { background:var(--accent-xlight); }
+.cell-hl-rent{ background:var(--rent-light); }
+
+footer{text-align:center;font-size:11px;color:var(--muted2);letter-spacing:.05em;padding:32px 0 20px}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     LOGIN PAGE
+══════════════════════════════════════ -->
+<div id="loginPage">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-mark">M</div>
+      <div class="login-logo-text">Maha<span>RERA</span></div>
+    </div>
+
+    <!-- ── Sign In panel ── -->
+    <div id="signinPanel">
+      <h2>Sign in</h2>
+      <p class="sub">Access the MahaRERA Project Explorer.<br>Enter your credentials to continue.</p>
+      <div class="login-error" id="loginError"></div>
+      <div class="field-group">
+        <label>Username</label>
+        <input type="text" id="loginUser" placeholder="Enter username" autocomplete="username" />
+      </div>
+      <div class="field-group">
+        <label>Password</label>
+        <input type="password" id="loginPass" placeholder="Enter password" autocomplete="current-password" />
+      </div>
+      <button class="login-btn" id="loginBtn" onclick="doLogin()">Sign In →</button>
+      <p class="auth-switch">Don't have an account? <a href="#" onclick="showSignup();return false;">Create one</a></p>
+    </div>
+
+    <!-- ── Sign Up panel ── -->
+    <div id="signupPanel" style="display:none">
+      <h2>Create account</h2>
+      <p class="sub">Join MahaRERA Project Explorer.<br>Pick a username and password to get started.</p>
+      <div class="login-error" id="signupError"></div>
+      <div class="field-group">
+        <label>Full Name</label>
+        <input type="text" id="signupName" placeholder="Your full name" autocomplete="name" />
+      </div>
+      <div class="field-group">
+        <label>Username</label>
+        <input type="text" id="signupUser" placeholder="Choose a username" autocomplete="username" />
+      </div>
+      <div class="field-group">
+        <label>Password</label>
+        <input type="password" id="signupPass" placeholder="At least 6 characters" autocomplete="new-password" />
+      </div>
+      <button class="login-btn" id="signupBtn" onclick="doSignup()">Create Account →</button>
+      <p class="auth-switch">Already have an account? <a href="#" onclick="showSignin();return false;">Sign in</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     APP PAGE
+══════════════════════════════════════ -->
+<div id="appPage">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-mark">M</div>
+      <div class="logo-text">Maha<span>RERA</span></div>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-label" id="topbarUser"></span>
+      <button class="logout-btn" onclick="doLogout()">Sign out</button>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">Project Registry</div>
+      <h1>Maharashtra Real Estate<br>Project Explorer</h1>
+      <p class="hero-desc">Browse and explore registered real estate projects across Maharashtra. Select a project to view complete details including location, area, timelines, and banking information.</p>
+      <div class="stats-strip">
+        <div class="stat-pill"><div class="stat-num" id="sTot">—</div><div class="stat-label">Projects</div></div>
+        <div class="stat-pill"><div class="stat-num" id="sRes">—</div><div class="stat-label">Residential</div></div>
+        <div class="stat-pill"><div class="stat-num" id="sCom">—</div><div class="stat-label">Commercial</div></div>
+        <div class="stat-pill"><div class="stat-num" id="sDist">—</div><div class="stat-label">Districts</div></div>
+        <div class="stat-pill"><div class="stat-num" id="sGraph">—</div><div class="stat-label">With Graphs</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="selector-panel">
+      <div class="panel-label">Find a Project</div>
+      <div class="controls-row">
+        <div class="select-wrap" id="selectWrap">
+          <button class="select-trigger" id="selectTrigger" type="button">
+            <span id="selectLabel" style="color:var(--muted2)">Browse all projects…</span>
+          </button>
+          <span class="select-arrow" id="selectArrow">▼</span>
+          <div class="select-dropdown" id="selectDropdown">
+            <div class="dropdown-search-wrap">
+              <span class="dropdown-search-icon">🔍</span>
+              <input class="dropdown-search" id="dropSearch" type="text" placeholder="Search by name, district…" autocomplete="off"/>
+            </div>
+            <div class="dropdown-list" id="dropList"></div>
+          </div>
+        </div>
+        <select class="filter-sel" id="typeFilter"><option value="">All Types</option></select>
+        <select class="filter-sel" id="distFilter"><option value="">All Districts</option></select>
+        <div class="mode-toggle">
+          <button class="mode-btn active-buy" id="btnBuy"  onclick="setMode('buy')">🏠 Buying</button>
+          <div class="mode-divider"></div>
+          <button class="mode-btn"            id="btnRent" onclick="setMode('rent')">🔑 Renting</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="placeholder" id="placeholder">
+      <div class="placeholder-icon">🏛️</div>
+      <h3>Select a project to view details</h3>
+      <p>Use the dropdown above to browse all projects,<br>or search by name, locality, or district.</p>
+    </div>
+
+    <div class="project-display" id="projectDisplay"></div>
+
+    <footer>MahaRERA Project Explorer · Data served live from server</footer>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// ════════════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════════════
+let ALL_PROJECTS    = [];
+let currentMode     = "buy";   // "buy" | "rent"
+let currentProject  = null;    // { project, graph, index } – last fetched
+let towerChart      = null;
+let priceChart      = null;
+
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById("btnBuy").className  = "mode-btn" + (mode === "buy"  ? " active-buy"  : "");
+  document.getElementById("btnRent").className = "mode-btn" + (mode === "rent" ? " active-rent" : "");
+  if (currentProject) renderProject(currentProject.project, currentProject.graph, currentProject.index);
+}
+
+// ════════════════════════════════════════════════════════
+//  AUTH
+// ════════════════════════════════════════════════════════
+async function checkSession() {
+  const res = await fetch("/api/me");
+  const d   = await res.json();
+  if (d.logged_in) showApp(d.name);
+}
+
+// ── Panel toggles ──
+function showSignup() {
+  document.getElementById("signinPanel").style.display = "none";
+  document.getElementById("signupPanel").style.display = "block";
+  clearAuthErrors();
+}
+function showSignin() {
+  document.getElementById("signupPanel").style.display = "none";
+  document.getElementById("signinPanel").style.display = "block";
+  clearAuthErrors();
+}
+function clearAuthErrors() {
+  ["loginError","signupError"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove("show");
+  });
+  ["loginUser","loginPass","signupName","signupUser","signupPass"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove("err");
+  });
+}
+
+// ── Login ──
+async function doLogin() {
+  const user = document.getElementById("loginUser").value.trim();
+  const pass = document.getElementById("loginPass").value;
+  const btn  = document.getElementById("loginBtn");
+
+  if (!user || !pass) { showAuthError("loginError", ["loginUser","loginPass"], "Please enter username and password."); return; }
+
+  btn.disabled = true;
+  btn.textContent = "Signing in…";
+
+  const res = await fetch("/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: user, password: pass })
+  });
+  const d = await res.json();
+
+  if (d.ok) {
+    showApp(d.name);
+  } else {
+    showAuthError("loginError", ["loginUser","loginPass"], d.error || "Invalid username or password.");
+    btn.disabled = false;
+    btn.textContent = "Sign In →";
+  }
+}
+
+// ── Signup ──
+async function doSignup() {
+  const name = document.getElementById("signupName").value.trim();
+  const user = document.getElementById("signupUser").value.trim();
+  const pass = document.getElementById("signupPass").value;
+  const btn  = document.getElementById("signupBtn");
+
+  if (!name || !user || !pass) {
+    showAuthError("signupError", ["signupName","signupUser","signupPass"], "Please fill in all fields.");
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "Creating account…";
+
+  const res = await fetch("/api/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, username: user, password: pass })
+  });
+  const d = await res.json();
+
+  if (d.ok) {
+    showApp(d.name);
+  } else {
+    showAuthError("signupError", ["signupName","signupUser","signupPass"], d.error || "Signup failed. Please try again.");
+    btn.disabled = false;
+    btn.textContent = "Create Account →";
+  }
+}
+
+async function doLogout() {
+  await fetch("/api/logout", { method: "POST" });
+  location.reload();
+}
+
+function showAuthError(errorId, fieldIds, msg) {
+  const el = document.getElementById(errorId);
+  el.textContent = msg;
+  el.classList.add("show");
+  fieldIds.forEach(id => {
+    const f = document.getElementById(id);
+    if (f) f.classList.add("err");
+  });
+}
+
+// Enter key on login / signup forms
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("loginPass").addEventListener("keydown", e => {
+    if (e.key === "Enter") doLogin();
+  });
+  document.getElementById("loginUser").addEventListener("keydown", e => {
+    if (e.key === "Enter") document.getElementById("loginPass").focus();
+  });
+  document.getElementById("signupPass").addEventListener("keydown", e => {
+    if (e.key === "Enter") doSignup();
+  });
+  document.getElementById("signupUser").addEventListener("keydown", e => {
+    if (e.key === "Enter") document.getElementById("signupPass").focus();
+  });
+  document.getElementById("signupName").addEventListener("keydown", e => {
+    if (e.key === "Enter") document.getElementById("signupUser").focus();
+  });
+  checkSession();
+});
+
+// ════════════════════════════════════════════════════════
+//  APP INIT — fetch project list from server
+// ════════════════════════════════════════════════════════
+async function showApp(userName) {
+  document.getElementById("loginPage").style.display = "none";
+  document.getElementById("appPage").style.display   = "block";
+  if (userName) {
+    document.getElementById("topbarUser").textContent = "Hi, " + userName;
+  }
+  document.getElementById("placeholder").innerHTML = `
+    <div class="loading-state"><div class="spinner"></div> Loading projects…</div>`;
+
+  try {
+    const res  = await fetch("/api/projects");
+    if (res.status === 401) { location.reload(); return; }
+    const data = await res.json();
+    ALL_PROJECTS = data.projects;
+    buildStats();
+    buildFilters();
+    renderDropList();
+    bindDropdown();
+    resetPlaceholder();
+  } catch(e) {
+    document.getElementById("placeholder").innerHTML = `
+      <div class="placeholder"><div class="placeholder-icon">⚠️</div>
+      <h3>Could not load data</h3><p>${e.message}</p></div>`;
+  }
+}
+
+function resetPlaceholder() {
+  document.getElementById("placeholder").innerHTML = `
+    <div class="placeholder-icon">🏛️</div>
+    <h3>Select a project to view details</h3>
+    <p>Use the dropdown above to browse all ${ALL_PROJECTS.length} registered projects,<br>
+    or search by name, locality, or district.</p>`;
+  document.getElementById("placeholder").style.display = "";
+}
+
+// ════════════════════════════════════════════════════════
+//  STATS
+// ════════════════════════════════════════════════════════
+function buildStats() {
+  let res = 0, com = 0, graphs = 0;
+  const dists = new Set();
+  ALL_PROJECTS.forEach(p => {
+    const t = (p.project_type || "").toLowerCase();
+    if (t.includes("residential")) res++;
+    else if (t.includes("commercial")) com++;
+    if (p.project_district && p.project_district !== "Not Available") dists.add(p.project_district);
+    if (p.has_graph) graphs++;
+  });
+  document.getElementById("sTot").textContent   = ALL_PROJECTS.length;
+  document.getElementById("sRes").textContent   = res;
+  document.getElementById("sCom").textContent   = com;
+  document.getElementById("sDist").textContent  = dists.size;
+  document.getElementById("sGraph").textContent = graphs;
+  document.getElementById("selectLabel").textContent = `Browse all ${ALL_PROJECTS.length} projects…`;
+}
+
+// ════════════════════════════════════════════════════════
+//  FILTERS — dynamic from actual data
+// ════════════════════════════════════════════════════════
+function buildFilters() {
+  const types = new Set(), dists = new Set();
+  ALL_PROJECTS.forEach(p => {
+    if (p.project_type) types.add(p.project_type);
+    if (p.project_district && p.project_district !== "Not Available" && isNaN(p.project_district))
+      dists.add(p.project_district);
+  });
+
+  const typeEl = document.getElementById("typeFilter");
+  typeEl.innerHTML = '<option value="">All Types</option>';
+  [...types].sort().forEach(t => {
+    const o = document.createElement("option"); o.value = t; o.textContent = t; typeEl.appendChild(o);
+  });
+
+  const distEl = document.getElementById("distFilter");
+  distEl.innerHTML = '<option value="">All Districts</option>';
+  [...dists].sort().forEach(d => {
+    const o = document.createElement("option"); o.value = d; o.textContent = d; distEl.appendChild(o);
+  });
+}
+
+// ════════════════════════════════════════════════════════
+//  DROPDOWN
+// ════════════════════════════════════════════════════════
+function getFiltered() {
+  const type = document.getElementById("typeFilter").value;
+  const dist = document.getElementById("distFilter").value;
+  const q    = document.getElementById("dropSearch").value.toLowerCase().trim();
+  return ALL_PROJECTS.filter(p => {
+    if (type && p.project_type !== type) return false;
+    if (dist && p.project_district !== dist) return false;
+    if (q) {
+      const hay = (p.project_name + " " + p.project_district).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function renderDropList() {
+  const list  = document.getElementById("dropList");
+  const items = getFiltered();
+  if (!items.length) {
+    list.innerHTML = '<div class="dropdown-empty">No projects match your filters</div>'; return;
+  }
+  list.innerHTML = items.map(p =>
+    `<div class="dropdown-option" onclick="selectProject(${p.index})">
+      <span class="opt-name">${p.project_name || "Untitled"}</span>
+      <span class="opt-meta">${p.project_district || ""}</span>
+      ${p.has_graph ? '<span class="opt-badge">📊 Graph</span>' : ""}
+    </div>`
+  ).join("");
+}
+
+async function selectProject(index) {
+  closeDropdown();
+  document.getElementById("placeholder").style.display = "none";
+  document.getElementById("projectDisplay").className  = "project-display visible";
+  document.getElementById("projectDisplay").innerHTML  =
+    '<div class="loading-state"><div class="spinner"></div> Loading project…</div>';
+
+  const proj = ALL_PROJECTS[index];
+  document.getElementById("selectLabel").textContent = proj.project_name || "Untitled";
+  document.getElementById("selectLabel").style.color = "";
+
+  const res  = await fetch(`/api/project/${index}`);
+  if (res.status === 401) { location.reload(); return; }
+  const data = await res.json();
+  currentProject = { project: data.project, graph: data.graph, index };
+  renderProject(data.project, data.graph, index);
+}
+
+let dropBound = false;
+function bindDropdown() {
+  if (dropBound) return; dropBound = true;
+  document.getElementById("selectTrigger").addEventListener("click", () => {
+    document.getElementById("selectDropdown").classList.contains("open") ? closeDropdown() : openDropdown();
+  });
+  document.addEventListener("click", e => {
+    if (!document.getElementById("selectWrap").contains(e.target)) closeDropdown();
+  });
+  document.getElementById("dropSearch").addEventListener("input", renderDropList);
+  document.getElementById("typeFilter").addEventListener("change", () => { renderDropList(); openDropdown(); });
+  document.getElementById("distFilter").addEventListener("change", () => { renderDropList(); openDropdown(); });
+}
+function openDropdown() {
+  document.getElementById("selectDropdown").classList.add("open");
+  document.getElementById("selectTrigger").classList.add("open");
+  document.getElementById("selectArrow").classList.add("up");
+  renderDropList();
+  document.getElementById("dropSearch").focus();
+}
+function closeDropdown() {
+  document.getElementById("selectDropdown").classList.remove("open");
+  document.getElementById("selectTrigger").classList.remove("open");
+  document.getElementById("selectArrow").classList.remove("up");
+}
+
+// ════════════════════════════════════════════════════════
+//  HELPERS
+// ════════════════════════════════════════════════════════
+// ── Price formatting ──
+function inr(n) { return "₹" + Number(n).toLocaleString("en-IN"); }
+function inrM(n) { const m = n/1e7; return "₹" + m.toFixed(2) + " Cr"; }
+function psf(price, area) { if (!area || area <= 0) return null; return Math.round(price / area); }
+function fmtPsf(price, area) {
+  const p = psf(price, area);
+  return p ? "₹" + p.toLocaleString("en-IN") + "/sq.ft" : null;
+}
+
+function v(project, key) {
+  if (project[key] !== undefined) return String(project[key]).trim();
+  const kn = key.toLowerCase().replace(/[_\s\-\/]/g,"");
+  for (const k of Object.keys(project))
+    if (k.toLowerCase().replace(/[_\s\-\/]/g,"") === kn) return String(project[k]).trim();
+  return "";
+}
+function fv(val) {
+  const s = String(val||"").trim();
+  if (!s || s === "Not Available" || s === "None" || s === "nan") return '<span class="field-v na">—</span>';
+  return `<span class="field-v">${s}</span>`;
+}
+function fvC(val, cls) {
+  const s = String(val||"").trim();
+  if (!s || s === "Not Available" || s === "None" || s === "nan") return '<span class="field-v na">—</span>';
+  return `<span class="field-v ${cls}">${s}</span>`;
+}
+function badgeHtml(type) {
+  if (!type) return "";
+  const t = type.toLowerCase();
+  if (t.includes("residential")) return '<span class="badge badge-res">Residential</span>';
+  if (t.includes("commercial"))  return '<span class="badge badge-com">Commercial</span>';
+  if (t.includes("mixed"))       return '<span class="badge badge-mix">Mixed</span>';
+  return '<span class="badge badge-oth">Other</span>';
+}
+function areaBar(label, rawVal, max, color) {
+  const n = parseFloat(rawVal) || 0;
+  const pct = max > 0 ? Math.min(100, (n/max)*100).toFixed(1) : 0;
+  return `<div class="area-bar">
+    <div class="area-bar-top"><span>${label}</span><span>${n.toLocaleString()} sq.m</span></div>
+    <div class="area-track"><div class="area-fill" style="background:${color};width:${pct}%"></div></div>
+  </div>`;
+}
+
+// ════════════════════════════════════════════════════════
+//  RENDER PROJECT — from server data
+// ════════════════════════════════════════════════════════
+const AREA_DEFS = [
+  ["total_land_area_of_approved_layout_sq_mts",                                     "Total Land Area (Layout)",  "#2a5caa"],
+  ["land_area_for_project_applied_for_this_registration_sq_mts",                    "Land Area (This Project)",  "#0d9e6e"],
+  ["permissible_built-up_area",                                                      "Permissible Built-up",      "#c4622d"],
+  ["sanctioned_built-up_area_of_the_project_applied_for_registration",              "Sanctioned Built-up",       "#7c4db8"],
+  ["aggregate_areain_sq_mts_of_recreational_open_space_as_per_layout_/_dp_remarks","Recreational Open Space",   "#b5b2aa"],
+];
+const KNOWN_COLS = new Set([
+  "project_location","project_type","project_name","proposed_completion_date_original",
+  "proposed_completion_date_revised","final_plot_bearing_no/cts_number/survey_number",
+  "total_land_area_of_approved_layout_sq_mts","land_area_for_project_applied_for_this_registration_sq_mts",
+  "permissible_built-up_area","sanctioned_built-up_area_of_the_project_applied_for_registration",
+  "aggregate_areain_sq_mts_of_recreational_open_space_as_per_layout_/_dp_remarks",
+  "project_building_name","project_street_name","project_locality","project_landmark",
+  "project_state/ut","project_district","project_taluka","project_village","project_pin_code",
+  "project_boundaries_east","project_boundaries_west","project_boundaries_south","project_boundaries_north",
+  "project_longitude","project_latitude","bank_bank_name","bank_ifsc_code","bank_bank_address",
+  "project_affiliated_public_authority_name",
+]);
+
+function renderProject(project, graph, index) {
+  const display = document.getElementById("projectDisplay");
+  display.className = "project-display visible";
+
+  const isBuy = currentMode === "buy";
+
+  const lat = v(project,"project_latitude");
+  const lng = v(project,"project_longitude");
+  const mapsUrl = (lat && lng && lat !== "0" && lng !== "0")
+    ? `https://maps.google.com/?q=${lat},${lng}` : "";
+
+  const areaVals = AREA_DEFS.map(([k]) => parseFloat(v(project,k)) || 0);
+  const maxArea  = Math.max(...areaVals, 1);
+
+  const extraCols = Object.keys(project).filter(k => !KNOWN_COLS.has(k) && v(project,k));
+
+  // Price overview from flats (if graph loaded)
+  let priceOverviewHtml = "";
+  if (graph && graph.flats && graph.flats.length) {
+    const flats = graph.flats;
+    const n = flats.length;
+    const avgBuy  = Math.round(flats.reduce((s,f) => s + f.buying_price,  0) / n);
+    const avgRent = Math.round(flats.reduce((s,f) => s + f.renting_price, 0) / n);
+    const avgArea = Math.round(flats.reduce((s,f) => s + f.area,          0) / n);
+    const buyPsfVal  = psf(avgBuy,  avgArea);
+    const rentPsfVal = psf(avgRent, avgArea);
+    const minBuy  = Math.min(...flats.map(f => f.buying_price));
+    const maxBuy  = Math.max(...flats.map(f => f.buying_price));
+    const minRent = Math.min(...flats.map(f => f.renting_price));
+    const maxRent = Math.max(...flats.map(f => f.renting_price));
+    priceOverviewHtml = `
+      <div class="card col-12" style="border-top:3px solid ${isBuy ? "var(--accent)" : "var(--rent)"}">
+        <div class="card-head">💰 Price Overview &nbsp;<span style="text-transform:none;letter-spacing:0;font-weight:400;font-size:11px;color:var(--muted2)">(based on ${n} flats in this project)</span></div>
+        <div class="price-summary">
+          <div class="price-box buy${isBuy ? "" : '" style="opacity:.55'}">
+            <div class="price-box-label">Buying Price</div>
+            <div class="price-box-val buy">${inrM(avgBuy)}</div>
+            <div class="price-box-sub">Avg · Range: ${inr(minBuy)} – ${inr(maxBuy)}</div>
+            ${buyPsfVal ? `<div class="price-box-psf">≈ ₹${buyPsfVal.toLocaleString("en-IN")}/sq.ft &nbsp;avg</div>` : ""}
+          </div>
+          <div class="price-box rent${!isBuy ? "" : '" style="opacity:.55'}">
+            <div class="price-box-label">Renting Price (Monthly)</div>
+            <div class="price-box-val rent">${inr(avgRent)}/mo</div>
+            <div class="price-box-sub">Avg · Range: ${inr(minRent)} – ${inr(maxRent)}</div>
+            ${rentPsfVal ? `<div class="price-box-psf">≈ ₹${rentPsfVal.toLocaleString("en-IN")}/sq.ft &nbsp;avg</div>` : ""}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  const modePillHtml = `<div class="mode-pill ${isBuy ? "buy" : "rent"}">
+    ${isBuy ? "🏠 Showing Buying Prices" : "🔑 Showing Renting Prices"}
+  </div>`;
+
+  display.innerHTML = `
+    ${modePillHtml}
+    <div class="proj-header">
+      <div class="proj-header-left">
+        <div class="proj-title">${v(project,"project_name") || "Untitled Project"}</div>
+        <div class="proj-building">${v(project,"project_building_name")}</div>
+        <div class="proj-tags">
+          ${badgeHtml(v(project,"project_type"))}
+          <span class="proj-tag">📍 ${v(project,"project_locality")}, ${v(project,"project_district")}</span>
+          <span class="proj-tag">📮 ${v(project,"project_pin_code")}</span>
+        </div>
+      </div>
+      <div class="proj-header-right">
+        <div class="stat-num" style="font-family:Karla;font-size:16px">${v(project,"project_district")||"—"}</div>
+        <div class="stat-label">${v(project,"project_taluka")}</div>
+      </div>
+    </div>
+
+    <div class="grid">
+      ${priceOverviewHtml}
+      <div class="card col-6">
+        <div class="card-head">📍 Location Details</div>
+        <div class="field"><span class="field-k">Street</span>${fv(v(project,"project_street_name"))}</div>
+        <div class="field"><span class="field-k">Locality</span>${fvC(v(project,"project_locality"),"blue")}</div>
+        <div class="field"><span class="field-k">Landmark</span>${fv(v(project,"project_landmark"))}</div>
+        <div class="field"><span class="field-k">Village</span>${fv(v(project,"project_village"))}</div>
+        <div class="field"><span class="field-k">Taluka</span>${fv(v(project,"project_taluka"))}</div>
+        <div class="field"><span class="field-k">District</span>${fvC(v(project,"project_district"),"blue")}</div>
+        <div class="field"><span class="field-k">State</span>${fv(v(project,"project_state/ut"))}</div>
+        <div class="field"><span class="field-k">PIN Code</span>${fv(v(project,"project_pin_code"))}</div>
+      </div>
+      <div class="card col-6">
+        <div class="card-head">📅 Registration & Timeline</div>
+        <div class="field"><span class="field-k">Project Type</span>${fv(v(project,"project_type"))}</div>
+        <div class="field"><span class="field-k">Plot / Survey No.</span>${fv(v(project,"final_plot_bearing_no/cts_number/survey_number"))}</div>
+        <div class="field"><span class="field-k">Original Completion</span>${fvC(v(project,"proposed_completion_date_original"),"orange")}</div>
+        <div class="field"><span class="field-k">Revised Completion</span>${fvC(v(project,"proposed_completion_date_revised"),"orange")}</div>
+        <div class="field"><span class="field-k">Public Authority</span>${fv(v(project,"project_affiliated_public_authority_name"))}</div>
+      </div>
+      <div class="card col-8">
+        <div class="card-head">📐 Area Breakdown</div>
+        ${AREA_DEFS.map(([k,label,color],i) => areaBar(label, areaVals[i], maxArea, color)).join("")}
+      </div>
+      <div class="card col-4">
+        <div class="card-head">🧭 Site Boundaries</div>
+        <div class="compass">
+          <div class="compass-cell"><div class="compass-dir">North</div><div class="compass-val">${v(project,"project_boundaries_north")||"—"}</div></div>
+          <div class="compass-cell"><div class="compass-dir">South</div><div class="compass-val">${v(project,"project_boundaries_south")||"—"}</div></div>
+          <div class="compass-cell"><div class="compass-dir">East</div><div class="compass-val">${v(project,"project_boundaries_east")||"—"}</div></div>
+          <div class="compass-cell"><div class="compass-dir">West</div><div class="compass-val">${v(project,"project_boundaries_west")||"—"}</div></div>
+        </div>
+      </div>
+      <div class="card col-4">
+        <div class="card-head">🗺️ Coordinates</div>
+        <div class="coords-display">
+          <span><span>Latitude</span><b>${lat||"—"}</b></span>
+          <span><span>Longitude</span><b>${lng||"—"}</b></span>
+        </div>
+        ${mapsUrl
+          ? `<a class="map-cta" href="${mapsUrl}" target="_blank">📍 Open in Google Maps</a>`
+          : '<div style="font-size:12px;color:var(--muted2);text-align:center;margin-top:12px">No coordinates available</div>'}
+      </div>
+      <div class="card col-8">
+        <div class="card-head">🏦 Banking Details</div>
+        <div class="field"><span class="field-k">Bank Name</span>${fvC(v(project,"bank_bank_name"),"blue")}</div>
+        <div class="field"><span class="field-k">IFSC Code</span>${fvC(v(project,"bank_ifsc_code"),"green")}</div>
+        <div class="field"><span class="field-k">Branch Address</span>${fv(v(project,"bank_bank_address"))}</div>
+      </div>
+      ${extraCols.length ? `
+      <div class="card col-12">
+        <div class="card-head">📋 Additional Details</div>
+        ${extraCols.map(k => `<div class="field"><span class="field-k">${k.replace(/_/g," ")}</span>${fv(v(project,k))}</div>`).join("")}
+      </div>` : ""}
+    </div>
+    <div id="analyticsSection"></div>
+  `;
+
+  setTimeout(() => {
+    document.querySelectorAll(".area-fill").forEach(el => {
+      const w = el.style.width; el.style.width = "0";
+      setTimeout(() => el.style.width = w, 60);
+    });
+  }, 80);
+
+  renderAnalytics(graph, index);
+}
+
+// ════════════════════════════════════════════════════════
+//  ANALYTICS — mode-aware (buy / rent)
+// ════════════════════════════════════════════════════════
+const PAL_BUY  = ["#1a4f9c","#0a8c5e","#b84e1a","#7c4db8","#c8920a","#6b6560"];
+const PAL_RENT = ["#6e35ab","#9b5fd4","#b845a8","#4a6eab","#ab6e35","#6b6560"];
+
+function renderAnalytics(data, index) {
+  const section = document.getElementById("analyticsSection");
+  if (!section) return;
+
+  if (!data) {
+    section.innerHTML = `<div class="no-graph">
+      <b>No graph data for this project yet</b>
+      File <code>project_${index+1}.json</code> not found in your graphs folder.<br>
+      Once your team adds it, it will appear here automatically.
+    </div>`;
+    return;
+  }
+
+  if (towerChart) { towerChart.destroy(); towerChart = null; }
+  if (priceChart) { priceChart.destroy(); priceChart = null; }
+
+  const isBuy      = currentMode === "buy";
+  const PALETTE    = isBuy ? PAL_BUY : PAL_RENT;
+  const priceKey   = isBuy ? "buying_price" : "renting_price";
+  const priceLabel = isBuy ? "Buying Price" : "Renting Price /mo";
+  const tickFmt    = isBuy
+    ? v => "₹"+(v/1e6).toFixed(1)+"M"
+    : v => "₹"+(v/1000).toFixed(0)+"K";
+
+  const towerDist   = data.tower_distribution || {};
+  const towerNames  = Object.keys(towerDist);
+  const towerVals   = Object.values(towerDist);
+  const floorPrices = (data.floor_prices || []).sort((a,b) => a.floor - b.floor);
+  // floor_prices has tower1/tower2 buying; for rent we derive from flats average per floor
+  const flats = data.flats || [];
+
+  // Build floor-level rent aggregation from flats (since floor_prices only has buying)
+  let floorChartData = [];
+  let chartDatasets  = [];
+  if (floorPrices.length) {
+    if (isBuy) {
+      // Use floor_prices directly (tower1/tower2 buying)
+      const seriesKeys = Object.keys(floorPrices[0]).filter(k => k !== "floor");
+      floorChartData = floorPrices;
+      chartDatasets  = seriesKeys.map((k,i) => ({
+        label: k.replace(/_/g," "),
+        data: floorPrices.map(x => x[k]),
+        backgroundColor: PALETTE[i % PALETTE.length],
+        borderRadius: 3,
+      }));
+    } else {
+      // Aggregate renting_price from flats per floor per tower
+      const towers = [...new Set(flats.map(f => f.tower))].sort();
+      const floors  = [...new Set(flats.map(f => f.floor))].sort((a,b) => a-b);
+      const byFloorTower = {};
+      flats.forEach(f => {
+        const key = `${f.floor}__${f.tower}`;
+        if (!byFloorTower[key]) byFloorTower[key] = [];
+        byFloorTower[key].push(f.renting_price);
+      });
+      const rentFloors = floors.filter(fl => towers.some(t => byFloorTower[`${fl}__${t}`]));
+      floorChartData = rentFloors.map(fl => ({ floor: fl }));
+      chartDatasets  = towers.map((t, i) => ({
+        label: t,
+        data: rentFloors.map(fl => {
+          const vals = byFloorTower[`${fl}__${t}`];
+          return vals ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length) : null;
+        }),
+        backgroundColor: PALETTE[i % PALETTE.length],
+        borderRadius: 3,
+      }));
+    }
+  }
+
+  // Flat table: decide column display order and highlighting
+  const TABLE_COLS = ["tower","floor","flat","area","buying_price","renting_price","market_value"];
+  const flatCols   = flats.length > 0
+    ? TABLE_COLS.filter(c => flats[0][c] !== undefined)
+    : (flats.length ? Object.keys(flats[0]) : []);
+
+  const colHead = c => ({
+    tower:"Tower", floor:"Floor", flat:"Flat No.", area:"Area (sq.ft)",
+    buying_price:"Buying Price", renting_price:"Rent /mo", market_value:"Market Value"
+  }[c] || c.replace(/_/g," "));
+
+  const cellClass = c => {
+    if (c === "buying_price")  return isBuy  ? "cell-buy cell-hl"      : "cell-buy";
+    if (c === "renting_price") return !isBuy ? "cell-rent cell-hl-rent" : "cell-rent";
+    if (c === "market_value")  return "cell-market";
+    return "";
+  };
+  const cellFmt = (c, val, flat) => {
+    if (c === "buying_price") {
+      const p = psf(val, flat.area);
+      return `${inr(val)}${p ? `<br><span class="cell-psf">₹${p.toLocaleString("en-IN")}/sq.ft</span>` : ""}`;
+    }
+    if (c === "renting_price") {
+      const p = psf(val, flat.area);
+      return `${inr(val)}/mo${p ? `<br><span class="cell-psf">₹${p.toLocaleString("en-IN")}/sq.ft</span>` : ""}`;
+    }
+    if (c === "market_value") return inr(val);
+    return val;
+  };
+
+  const chartHead = isBuy ? "💰 Buying Price by Floor & Tower" : "🔑 Renting Price by Floor & Tower";
+
+  section.innerHTML = `
+    <div class="analytics-grid">
+      ${towerNames.length ? `
+      <div class="card col-6">
+        <div class="card-head">🏗️ Tower Distribution</div>
+        <canvas id="towerChart" height="220"></canvas>
+      </div>` : ""}
+      ${floorChartData.length && chartDatasets.length ? `
+      <div class="card col-6">
+        <div class="card-head">${chartHead}</div>
+        <canvas id="priceChart" height="220"></canvas>
+      </div>` : ""}
+      ${flats.length ? `
+      <div class="card col-12">
+        <div class="card-head">📋 Flat Inventory &nbsp;<span style="text-transform:none;letter-spacing:0;font-weight:400;font-size:11px;color:var(--muted2)">${isBuy ? "— buying prices highlighted" : "— renting prices highlighted"}</span></div>
+        <div style="overflow-x:auto">
+          <table class="report-table">
+            <thead><tr>${flatCols.map(c=>`<th>${colHead(c)}</th>`).join("")}</tr></thead>
+            <tbody>${flats.map(f=>`<tr>${flatCols.map(c=>`<td class="${cellClass(c)}">${cellFmt(c,f[c],f)}</td>`).join("")}</tr>`).join("")}</tbody>
+          </table>
+        </div>
+      </div>` : ""}
+    </div>`;
+
+  if (towerNames.length) {
+    towerChart = new Chart(document.getElementById("towerChart"), {
+      type: "doughnut",
+      data: { labels: towerNames, datasets: [{ data: towerVals, backgroundColor: PALETTE.slice(0,towerNames.length), borderWidth:0 }] },
+      options: { plugins: { legend: { position:"bottom" } }, cutout:"60%" }
+    });
+  }
+  if (floorChartData.length && chartDatasets.length) {
+    priceChart = new Chart(document.getElementById("priceChart"), {
+      type: "bar",
+      data: {
+        labels: floorChartData.map(x => "Floor "+x.floor),
+        datasets: chartDatasets,
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position:"bottom" } },
+        scales: { y: { ticks: { callback: tickFmt } } }
+      }
+    });
+  }
+}
+</script>
+</body>
+</html>
