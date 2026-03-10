@@ -1,5 +1,5 @@
 """
-MahaRERA Project Explorer — Server
+Property Index Project Explorer — Server
 ===================================
 Set your file paths in config.py, then run:
     python server.py
@@ -191,7 +191,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", default="127.0.0.1", help="Host to bind (use 0.0.0.0 for network access)")
     args = parser.parse_args()
-    print(f"\n  MahaRERA Explorer running → http://{args.host}:{PORT}")
+    print(f"\n  Property Index Explorer running → http://{args.host}:{PORT}")
     print(f"  Excel  : {EXCEL_PATH}")
     print(f"  Graphs : {GRAPHS_DIR}")
     print(f"  Users  : {USERS_FILE}\n")

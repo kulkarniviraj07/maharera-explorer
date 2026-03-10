@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MahaRERA Project Explorer</title>
+<title>Property Index Project Explorer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Karla:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -244,14 +244,14 @@ footer{text-align:center;font-size:11px;color:var(--muted2);letter-spacing:.05em
 <div id="loginPage">
   <div class="login-card">
     <div class="login-logo">
-      <div class="login-logo-mark">M</div>
-      <div class="login-logo-text">Maha<span>RERA</span></div>
+      <div class="login-logo-mark">P</div>
+      <div class="login-logo-text"><span>Property Index</span></div>
     </div>
 
     <!-- ── Sign In panel ── -->
     <div id="signinPanel">
       <h2>Sign in</h2>
-      <p class="sub">Access the MahaRERA Project Explorer.<br>Enter your credentials to continue.</p>
+      <p class="sub">Access the Property Index Project Explorer.<br>Enter your credentials to continue.</p>
       <div class="login-error" id="loginError"></div>
       <div class="field-group">
         <label>Username</label>
@@ -268,7 +268,7 @@ footer{text-align:center;font-size:11px;color:var(--muted2);letter-spacing:.05em
     <!-- ── Sign Up panel ── -->
     <div id="signupPanel" style="display:none">
       <h2>Create account</h2>
-      <p class="sub">Join MahaRERA Project Explorer.<br>Pick a username and password to get started.</p>
+      <p class="sub">Join Property Index Project Explorer.<br>Pick a username and password to get started.</p>
       <div class="login-error" id="signupError"></div>
       <div class="field-group">
         <label>Full Name</label>
@@ -296,8 +296,8 @@ footer{text-align:center;font-size:11px;color:var(--muted2);letter-spacing:.05em
   <!-- Topbar -->
   <div class="topbar">
     <div class="logo">
-      <div class="logo-mark">M</div>
-      <div class="logo-text">Maha<span>RERA</span></div>
+      <div class="logo-mark">P</div>
+      <div class="logo-text">Property Index</div>
     </div>
     <div class="topbar-right">
       <span class="topbar-label" id="topbarUser"></span>
@@ -357,7 +357,7 @@ footer{text-align:center;font-size:11px;color:var(--muted2);letter-spacing:.05em
 
     <div class="project-display" id="projectDisplay"></div>
 
-    <footer>MahaRERA Project Explorer · Data served live from server</footer>
+    <footer>Property Index Project Explorer · Data served live from server</footer>
   </div>
 </div>
 
@@ -848,12 +848,14 @@ function renderProject(project, graph, index) {
           ? `<a class="map-cta" href="${mapsUrl}" target="_blank">📍 Open in Google Maps</a>`
           : '<div style="font-size:12px;color:var(--muted2);text-align:center;margin-top:12px">No coordinates available</div>'}
       </div>
-      <div class="card col-8">
+      <!--
+        <div class="card col-8">
         <div class="card-head">🏦 Banking Details</div>
         <div class="field"><span class="field-k">Bank Name</span>${fvC(v(project,"bank_bank_name"),"blue")}</div>
         <div class="field"><span class="field-k">IFSC Code</span>${fvC(v(project,"bank_ifsc_code"),"green")}</div>
         <div class="field"><span class="field-k">Branch Address</span>${fv(v(project,"bank_bank_address"))}</div>
       </div>
+      -->
       ${extraCols.length ? `
       <div class="card col-12">
         <div class="card-head">📋 Additional Details</div>
